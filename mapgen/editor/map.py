@@ -16,6 +16,10 @@ class MGMapGraphicsItem(QGraphicsItem):
     @property
     def extents(self) -> QSizeF:
         return QSizeF(self.width, self.height)
+
+    @property
+    def image(self) -> List:
+        return self.map_image
     
     def set_map_image(self, map_image: List):
         

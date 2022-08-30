@@ -15,7 +15,7 @@ class MGMainWindow(QMainWindow):
         self.workspace = MGWorkspaceWidget(parent=self)
         self.setCentralWidget(self.workspace)
 
-        menu = MGMenuBar(self)
+        menu = MGMenuBar(self, self.workspace)
         self.setMenuBar(menu)
 
         options = MGOptionsDockWidget(parent=self)

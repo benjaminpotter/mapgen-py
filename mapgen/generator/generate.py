@@ -3,74 +3,58 @@ from dataclasses import dataclass
 from noise import pnoise2
 from random import randint, random
 from typing import List
+import math
 
-@dataclass
-class NoiseMapProcessingData:
-    sea_level: float
-    # etc...
+from mapgen.utils import map_to_range
+from mapgen.generator.map import Map, MapOptions
 
 class Generator():
 
     @staticmethod
-    def generate_noise(resolution: tuple) -> List: # signature will be extended in the future
-        print("Generating...")
+    def _perlin(x: float, y: float, offset: int):
+        """
+        Returns noise at [x, y]
+        """
 
-        #pnoise = PerlinNoise(octaves=3, seed=1)
-        maxs = []
+        # TODO apply noise layering
+
+        noise = pnoise2(x, y, base=offset, octaves=6)
+        return map_to_range(noise, -math.sqrt(2)/2, math.sqrt(2)/2, 0, 1)
+
+    @staticmethod
+    def _generate_noise(resolution: tuple) -> List:
+        """
+        Generates noise map. Data returned is a list of lists where the nested lists are rows.
+        In each row there are floating point values from 0-1 that represent terrain height.
+        """
+
         seed = randint(0, 100)
+        scale = 2 # scale of two means each pixel is twice as wide
 
         noise_map = [None] * resolution[1]
         for y in range(resolution[1]):
             row = [0] * resolution[0]
             for x in range(resolution[0]):
-                row[x] = (pnoise2(x/resolution[0], y/resolution[1], octaves=12, base=seed) / 0.7 + 1.0) / 2.0
+
+                xn = map_to_range(x, 0, resolution[0], 0, 1)
+                yn = map_to_range(y, 0, resolution[1], 0, 1)
+
+                row[x] = Generator._perlin(xn, yn, seed)
                 
-            maxs.append(max(row))
             noise_map[y] = row
 
         return noise_map
 
-
     @staticmethod
-    def noise_to_greyscale(noise_map: List) -> List:
+    def generate(opts: MapOptions) -> Map:
         """
-        Convert noisemap to a RGB greyscale image.
-        """
+        Generate and return a full map object.
 
-        # check for invalid noise map
-
-        width = len(noise_map[0])
-        height = len(noise_map)
-
-        image = [None] * height
-        for y in range(height):
-            row = [0] * width
-            for x in range(width):
-                noise_col = noise_map[y][x] * 255.0
-                row[x] = [noise_col] * 3
-            image[y] = row
-                
-        return image
-
-
-    @staticmethod
-    def noise_to_pixels(noise_map: List, processing_data: NoiseMapProcessingData) -> List:
-        """
-        Takes noise map (List of floating points between 0-1) and converts it to a colour image
+        TODO spawn a new thread
         """
 
-        width = len(noise_map[0])
-        height = len(noise_map)
+        map = Map(noise_map=Generator._generate_noise(opts.resolution))
+        return map
 
-        image = [None] * height
-        for y in range(height):
-            row = [0] * width
-            for x in range(width):
-                noise = noise_map[y][x]
-                row[x] = (0, 255, 0)
-                if noise < processing_data.sea_level:
-                    row[x] = (0, 0, 255)
-                
-            image[y] = row
-                
-        return image
+
+   

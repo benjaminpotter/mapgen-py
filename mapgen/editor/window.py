@@ -10,7 +10,7 @@ class MGMainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
 
-        self.setWindowTitle("Map Gen")
+        self.setWindowTitle("MapGenPy")
 
         self.workspace = MGWorkspaceWidget(parent=self)
         self.setCentralWidget(self.workspace)

@@ -1,9 +1,10 @@
 from PySide6.QtWidgets import QGraphicsView, QGraphicsScene, QFileDialog
 
-from mapgen.editor.map import MGMapGraphicsItem
-from mapgen.generator.generate import Generator, NoiseMapProcessingData
+from mapgen.editor.map_display import MGMapGraphicsItem
+from mapgen.generator.generate import Generator
 
 from mapgen import utils
+from mapgen.generator.map import Map, MapOptions
 
 
 class MGWorkspaceWidget(QGraphicsView):
@@ -12,19 +13,21 @@ class MGWorkspaceWidget(QGraphicsView):
         super().__init__(parent)
 
         self.setScene(QGraphicsScene(self))
+
+        self.resolution = (300, 300) # can't handle large maps...
         
-        self.map_item = MGMapGraphicsItem()
-        self.scene().addItem(self.map_item)
+        self.map: Map = None
+        self.map_display = MGMapGraphicsItem()
+        self.scene().addItem(self.map_display)
         
         self.refresh_map()
 
-    def refresh_map(self): # TODO where should this happen?
+    def refresh_map(self):
         
-        noise_map = Generator.generate_noise((300, 300))
-        # image = Generator.noise_to_greyscale(noise_map)
-        image = Generator.noise_to_pixels(noise_map, NoiseMapProcessingData(0.5))
+        opts = MapOptions() # use defaults for now
 
-        self.map_item.set_map_image(image)
+        self.map = Generator.generate(opts)
+        self.map_display.set_map_image(self.map.colour)
 
     def save_map(self):
         filepath = QFileDialog.getSaveFileName(self, caption="Export to PNG", filter="Images (*.png)", dir="/")[0] # for some reason this returns a tuple with the filter
@@ -32,11 +35,5 @@ class MGWorkspaceWidget(QGraphicsView):
             return
 
         print(f"Saving map to {filepath}...")
-
-        img = utils.flatten_list((300, 300), self.map_item.image)
-
-        utils.write_to_png(
-            filepath, 
-            (300, 300), # self.map_item.extents
-            img
-        )
+        img = utils.flatten_list(self.map.resolution, self.map.colour)
+        utils.write_to_png(filepath, self.map.resolution, img)

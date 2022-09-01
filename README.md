@@ -2,6 +2,8 @@
 
 Create awesome maps for D&D, and other things too!
 
+> **Screenshots to be included**
+
 Author: Ben Potter
 
 Contributors: 
@@ -11,6 +13,9 @@ Current Release:
 ## Getting Started
 
 Currently the project only has a GUI available. You can open it by cloning the project and, in a bash script, performing ```python3 gui.py``` or the equivalent on your machine.
+
+## Contributing
+Placeholder for information about how to contribute.
 
 ## Roadmap
 

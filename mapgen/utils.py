@@ -14,3 +14,6 @@ def write_to_png(filepath: str, size: Tuple, data: List):
     img.putdata(data=data)
 
     img.save(filepath)
+
+def map_to_range(val, ilb, itb, olb, otb):
+    return olb + ((otb - olb) / (itb - ilb)) * (val - ilb)

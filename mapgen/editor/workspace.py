@@ -13,8 +13,6 @@ class MGWorkspaceWidget(QGraphicsView):
         super().__init__(parent)
 
         self.setScene(QGraphicsScene(self))
-
-        self.resolution = (300, 300) # can't handle large maps...
         
         self.map: Map = None
         self.map_display = MGMapGraphicsItem()

@@ -29,8 +29,7 @@ class Generator():
         """
 
         seed = randint(0, 100)
-        scale = 2 # scale of two means each pixel is twice as wide
-
+        
         noise_map = [None] * resolution[1]
         for y in range(resolution[1]):
             row = [0] * resolution[0]

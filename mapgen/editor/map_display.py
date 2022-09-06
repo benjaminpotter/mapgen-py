@@ -29,6 +29,7 @@ class MGMapGraphicsItem(QGraphicsItem):
         self.width = len(map_image[0])
         self.height = len(map_image)
         
+        self.setPos(-self.width/2, -self.height/2)
         self.update()
 
     def boundingRect(self) -> QRectF:

@@ -19,5 +19,5 @@ class MGMainWindow(QMainWindow):
         self.setMenuBar(menu)
 
         options = MGOptionsDockWidget(parent=self)
-        options.generateButton.clicked.connect(self.workspace.refresh_map)
+        options.generateButton.clicked.connect(lambda: self.workspace.refresh_map(options.map_options))
         self.addDockWidget(Qt.DockWidgetArea.RightDockWidgetArea, options)
